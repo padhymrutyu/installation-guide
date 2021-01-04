@@ -1,0 +1,86 @@
+FROM centos:latest
+MAINTAINER SUBHAM@PADHY
+RUN yum install -y httpd \
+    zip \
+    unzip
+ADD https://www.free-css.com/assets/files/free-css-templates/download/page261/parallo.zip /var/www/html
+WORKDIR /var/www/html
+RUN unzip parallo.zip
+RUN cp -rvf templatemo_534_parallo/* .
+RUN rm -rf templatemo_534_parallo parallo.zip
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+EXPOSE 80
+--------------------------------------------------------
+FROM centos:latest
+MAINTAINER SUBHAM@PADHY
+RUN yum install -y httpd \
+    zip \
+    unzip
+ADD https://www.free-css.com/assets/files/free-css-templates/download/page262/pomato.zip /var/www/html
+WORKDIR /var/www/html
+RUN unzip pomato.zip
+RUN cp -rvf pomato/* .
+RUN rm -rf pomato pomato.zip
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+EXPOSE 80
+---------------------------------------------------------
+node{
+    
+   stage("pull sourcecode from GitHub"){
+       
+    git 'https://github.com/padhymrutyu/demo2.git'
+   
+    }
+   stage("build docker file"){
+        
+        sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
+        
+        sh 'docker image tag $JOB_NAME:v1.$BUILD_ID subham25/$JOB_NAME:v1.$BUILD_ID'
+       
+        sh'docker image tag $JOB_NAME:v1.$BUILD_ID subham25/$JOB_NAME:latest'
+    
+ }
+   stage("push image to Docker Hub"){
+         
+      withCredentials([string(credentialsId: 'dockpass', variable: 'dockpass')]) {
+     
+         // some block
+         
+       sh 'docker login -u subham25  -p ${dockpass}'
+          
+       sh 'docker image push subham25/$JOB_NAME:v1.$BUILD_ID'
+         
+       sh 'docker image push subham25/$JOB_NAME:latest'
+         
+       sh 'docker image rmi $JOB_NAME:v1.$BUILD_ID subham25/$JOB_NAME:v1.$BUILD_ID  subham25/$JOB_NAME:latest'
+        
+      }
+    
+     }
+   stage("Deployment of Docker container"){
+        
+     def dockerrun = 'docker run -p 8001:80 -itd --name subham subham25/demo-pipeline:latest'
+        
+     def dockerrm = 'docker container rm -f subham'
+        
+     def dockerimagerm = 'docker image rmi -f subham25/demo-pipeline'
+        
+      sshagent(['dockerhostpass']) {
+    
+         // some block
+       
+       sh "ssh -o StrictHostKeyChecking=no  ec2-user@172.31.42.124  ${dockerrm}"
+       
+       sh "ssh -o StrictHostKeyChecking=no  ec2-user@172.31.42.124  ${dockerimagerm}"
+       
+       sh "ssh -o StrictHostKeyChecking=no  ec2-user@172.31.42.124  ${dockerrun}"
+        
+        }
+    
+     }
+  
+}
+
+
+
+
