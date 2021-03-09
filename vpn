@@ -1,0 +1,27 @@
+Contents for /etc/ipsec.d/aws-vpn.conf 
+conn Tunnel1
+        authby=secret 
+        auto=start 
+        left=%defaultroute 
+        leftid=Customer end VPN public IP 
+        right=AWS VPN Tunnel 1 public IP 
+        type=tunnel 
+        ikelifetime=8h 
+        keylife=lh 
+        phase2alg=aes128-sha1;modp1024 
+        ike=aes128-sha1;modp1024 
+        keyingtries=%forever 
+        keyexchange=ike 
+        leftsubnet=Customer end VPN CIDR 
+        rightsubnet=AWS end VPN CIDR 
+        dpddelay=10 
+        dpdtimeout=30  
+        dpdaction=restart_by_peer
+        
+Contents for /ptc/ipsec.d/aws-vpn.secrets 
+<Public IP of Openswan instance> <Public IP of third party network : PSK "<PSK>" 
+
+Commands to enable/start ipsec service 
+   $ chkconfig ipsec on 
+   $ service ipsec start 
+   $ service ipsec status 
