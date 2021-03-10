@@ -1,0 +1,21 @@
+this one for allowing group
+============================
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": "sts:AssumeRole",
+    "Resource": "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/UpdateApp"
+  }
+}
+
+this one for denying group
+============================
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Deny",
+    "Action": "sts:AssumeRole",
+    "Resource": "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/UpdateApp"
+  }
+}
