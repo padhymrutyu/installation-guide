@@ -18,10 +18,19 @@ conn Tunnel1
         dpdtimeout=30  
         dpdaction=restart_by_peer
         
-Contents for /ptc/ipsec.d/aws-vpn.secrets 
+Contents for /etc/ipsec.d/aws-vpn.secrets 
 <Public IP of Openswan instance> <Public IP of third party network : PSK "<PSK>" 
 
 Commands to enable/start ipsec service 
    $ chkconfig ipsec on 
    $ service ipsec start 
    $ service ipsec status 
+onprem vm
+=========
+yum install openswan
+vim /etc/ipsec.conf check then :wq!
+vim /etc/sysctl.conf
+# paste these contents
+net.ipv4.ip_forward = 1
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
