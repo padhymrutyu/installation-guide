@@ -9,6 +9,11 @@ sudo yum-config-manager \
 
 sudo yum install docker-ce docker-ce-cli containerd.io
 
+docker -v --> to check the version
+
+systemctl start docker
+systemctl enable docker
+
 -----------------------------------------------------------------
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
