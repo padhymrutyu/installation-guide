@@ -47,6 +47,7 @@ sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
 kubeadm init
+kubeadm init --ignore-preflight-errors=NumCPU (if you getting error for cpu cores run this)
 kubeadm token create --print-join-command --ttl=0 -->for token create
 
 echo '1' > /proc/sys/net/ipv4/ip_forward
